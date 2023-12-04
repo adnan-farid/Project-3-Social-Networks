@@ -103,4 +103,52 @@ public:
         executionTime = duration<double>(endTime - startTime).count();
         return make_pair(distances[end], dijkstraPath);
     }
+pair<int, vector<int>> BFS(int start, int end, double &executionTime2) {
+        using namespace std::chrono;
+        auto startTime = high_resolution_clock::now();
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; //priority queue to look at nodes based on weights
+        unordered_map<int, int> parent; //map to track parent of each node
+        unordered_map<int, int> distances; //map to track total weight from start to each node
+
+        unordered_set<int> visited; //set to keep track of visited nodes
+
+        pq.push({0, start});
+        distances[start] = 0;
+        visited.insert(start);
+        vector<int> path;
+        while(!pq.empty()) {
+            int curr_node = pq.top().second;
+            int curr_weight = pq.top().first;
+            pq.pop();
+            //vector<int> path;
+            //if the current node is the end node
+            if (curr_node == end) {
+                //vector<int> path;
+                for (int n = end; n != start; n = parent[n]) {
+                    path.push_back(n);
+                }
+                path.push_back(start);
+                reverse(path.begin(), path.end());
+                //return path;
+            }
+
+            //looks at neighbors of current node
+            for (const auto &neighbor : adjacencyList[curr_node]) {
+                int next = neighbor.first;
+                int edge_weight = neighbor.second;
+                int total = curr_weight + edge_weight;
+
+                //if neighbor is not visited or new path is shorter, it updates
+                if (visited.find(next) == visited.end() || total < distances[next]) {
+                    pq.push({total, next});
+                    parent[next] = curr_node;
+                    distances[next] = total;
+                    visited.insert(next);
+                }
+            }
+        }
+        auto endTime = high_resolution_clock ::now();
+        executionTime2 = duration<double>(endTime - startTime).count();
+        return make_pair(distances[end], path);
+    }
 };
