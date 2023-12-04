@@ -26,16 +26,20 @@ private:
         adjacencyList.clear();
     }
 public:
+//graph constructor
     Graph() {
         nodeAmt = 0;
     }
+//add edges
     void addEdge(int from, int to, int weight = 1) {
         //(from -> to)
         adjacencyList[from].push_back(make_pair(to, weight));
         //add another edge (to -> from) because the graph is undirected
         adjacencyList[to].push_back(make_pair(from, weight));
     }
+//read data
     void readDataset(const string& filename) {
+        //clears data for new file
         clearData();
         ifstream file(filename);
         string line;
@@ -53,11 +57,13 @@ public:
         }
         setNodeAmt(nodeCounter.size());
     }
+//return number of nodes
     int getGraphSize() {
         return nodeAmt;
     }
     pair<int, vector<int>> dijkstra(int start, int end, double& executionTime) {
         using namespace std::chrono;
+        //keep track of execution time and initialize distances/before maps
         auto startTime = high_resolution_clock::now();        unordered_map<int, int> distances;
         unordered_map<int, int> before;
         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
@@ -66,14 +72,13 @@ public:
         }
         distances[start] = 0;
         pq.push(make_pair(0, start));
-
         while (!pq.empty()) {
             int curr = pq.top().second;
             pq.pop();
             if (curr == end) {
                 break;
             }
-
+            //check current and adjacent nodes if necessary
             for (auto& adjacentNode : adjacencyList[curr]) {
                 int next = adjacentNode.first;
                 int weight = adjacentNode.second;
@@ -87,6 +92,7 @@ public:
             }
 
         }
+        //reconstruct path
         vector <int> dijkstraPath;
         if (distances[end] != numeric_limits<int>::max()) {
             for (int i = end; i != start; i = before[i]) {
@@ -95,6 +101,7 @@ public:
             dijkstraPath.push_back(start);
             reverse(dijkstraPath.begin(), dijkstraPath.end());
         }
+        //keep track of time and return path
         auto endTime = high_resolution_clock::now();
         executionTime = duration<double>(endTime - startTime).count();
         return make_pair(distances[end], dijkstraPath);
