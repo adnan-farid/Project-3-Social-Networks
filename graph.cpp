@@ -130,7 +130,7 @@ pair<int, vector<int>> BFS(int start, int end, double &executionTime2) {
                 }
                 path.push_back(start);
                 reverse(path.begin(), path.end());
-                //return path;
+                break;
             }
 
             //looks at neighbors of current node
