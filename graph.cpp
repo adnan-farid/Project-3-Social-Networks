@@ -22,6 +22,9 @@ private:
     void setNodeAmt(int nodeAmt) {
         this->nodeAmt = nodeAmt;
     }
+    void clearData() {
+        adjacencyList.clear();
+    }
 public:
     Graph() {
         nodeAmt = 0;
@@ -33,6 +36,7 @@ public:
         adjacencyList[to].push_back(make_pair(from, weight));
     }
     void readDataset(const string &filename) {
+        clearData();
         ifstream file(filename);
         string line;
         //get rid of first line in csv
@@ -49,8 +53,8 @@ public:
         }
         setNodeAmt(nodeCounter.size());
     }
-    void getGraphSize() {
-        cout << "There are " << nodeAmt << " Nodes." << endl;
+    double getGraphSize() {
+        return nodeAmt;
     }
     void printGraph() {
         for (auto& pair : adjacencyList) {
@@ -63,7 +67,8 @@ public:
     }
     pair<int,vector<int>> dijkstra(int start, int end, double &executionTime) {
         using namespace std::chrono;
-        auto startTime = high_resolution_clock::now();        unordered_map<int, int> distances;
+        auto startTime = high_resolution_clock::now();
+        unordered_map<int, int> distances;
         unordered_map<int, int> before;
         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
         for (auto& pair: adjacencyList) {
@@ -104,7 +109,8 @@ public:
         executionTime = duration<double>(endTime - startTime).count();
         return make_pair(distances[end], dijkstraPath);
     }
-pair<int, vector<int>> BFS(int start, int end, double &executionTime2) {
+
+    pair<int, vector<int>> BFS(int start, int end, double &executionTime2) {
         using namespace std::chrono;
         auto startTime = high_resolution_clock::now();
         priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; //priority queue to look at nodes based on weights
@@ -130,6 +136,7 @@ pair<int, vector<int>> BFS(int start, int end, double &executionTime2) {
                 }
                 path.push_back(start);
                 reverse(path.begin(), path.end());
+                //return path;
                 break;
             }
 
